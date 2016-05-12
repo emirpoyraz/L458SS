@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/light_grey"
+    android:layout_alignParentBottom="true"
+    >
+
+
+    <Button
+        android:id="@+id/movingBallId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Moving Ball"
+        android:layout_column="3"
+
+        android:layout_above="@+id/startServiceId"
+        android:layout_centerHorizontal="true">
+
+    </Button>
+
+    <Button
+        android:id="@+id/touchMultipleId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Find the Square"
+        android:layout_column="3"
+
+        android:layout_above="@+id/movingBallId"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical">
+
+    </Button>
+
+    <Button
+        android:id="@+id/catchCollorId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Catch The Blue"
+        android:layout_column="3"
+        android:layout_above="@+id/movingBallId"
+        android:layout_centerHorizontal="true">
+
+    </Button>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+    <Button
+        android:id="@+id/stopServiceId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:layout_column="3"
+        android:layout_alignParentBottom="true">
+
+    </Button>
+
+    <Button android:id="@+id/startServiceId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_above="@+id/stopServiceId"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="1.38">
+    </Button>
+
+
+</LinearLayout>
+</LinearLayout>
