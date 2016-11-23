@@ -5,42 +5,69 @@
     android:layout_height="fill_parent"
     android:background="@color/light_grey"
     android:layout_alignParentBottom="true"
-    >
+    android:weightSum="1">
 
 
     <Button
-        android:id="@+id/movingBallId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Moving Ball"
+        android:id="@+id/stress1Id"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:text="1"
+        android:orientation="horizontal"
         android:layout_column="3"
-
-        android:layout_above="@+id/startServiceId"
-        android:layout_centerHorizontal="true">
+        android:layout_above="@+id/stress2Id"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal">
 
     </Button>
 
     <Button
-        android:id="@+id/touchMultipleId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Find the Square"
+        android:id="@+id/stress2Id"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:text="2"
         android:layout_column="3"
+        android:layout_above="@+id/stress4Id"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal">
 
+    </Button>
+
+    <Button
+        android:id="@+id/stress3Id"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:text="3"
+        android:orientation="horizontal"
+        android:layout_column="3"
+        android:layout_above="@+id/stress3Id"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal">
+
+    </Button>
+
+
+    <Button
+        android:id="@+id/stress4Id"
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:text="4"
+        android:layout_column="3"
+        android:layout_above="@+id/stress5Id"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal">
+
+    </Button>
+
+    <Button
+        android:id="@+id/stress5Id"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:text="5"
+        android:layout_column="3"
         android:layout_above="@+id/movingBallId"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center_vertical">
-
-    </Button>
-
-    <Button
-        android:id="@+id/catchCollorId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Catch The Blue"
-        android:layout_column="3"
-        android:layout_above="@+id/movingBallId"
-        android:layout_centerHorizontal="true">
+        android:layout_gravity="center_horizontal">
 
     </Button>
 
@@ -54,7 +81,7 @@
     <Button
         android:id="@+id/stopServiceId"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="Stop"
         android:layout_column="3"
         android:layout_alignParentBottom="true">
@@ -63,11 +90,10 @@
 
     <Button android:id="@+id/startServiceId"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="29dp"
         android:text="Start"
         android:layout_above="@+id/stopServiceId"
-        android:layout_centerHorizontal="true"
-        android:layout_weight="1.38">
+        android:layout_centerHorizontal="true">
     </Button>
 
 

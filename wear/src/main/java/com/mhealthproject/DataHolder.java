@@ -21,7 +21,7 @@ public class DataHolder {
 
     private boolean safe;
     private int appInt;
-
+    private int rank;
 
 
     private Service mContext;
@@ -41,6 +41,10 @@ public class DataHolder {
     public boolean getSendTouchEvents() {return safe;}
     public void setSendToucEvents(boolean safe) {this.safe = safe;
          Log.i(TAG, "DataHolder safe: " + safe);}
+
+    public int getStressRank() {return rank;}
+    public void setStressRank(int rank) {this.rank = rank;
+        Log.i(TAG, "DataHolder stress rank: " + rank);}
 
     public int getRunningAppInt() {return appInt;}
     public void setRunningAppInt(int appInt) {this.appInt = appInt;

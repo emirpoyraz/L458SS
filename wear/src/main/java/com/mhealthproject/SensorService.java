@@ -3,7 +3,9 @@ package com.mhealthproject;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +23,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -64,16 +68,18 @@ public class SensorService extends Service implements SensorEventListener {
 
     private String accellerometerSensor = "";
     private String heartRateSensor = "";
-    private String stepCounterSensor="";
+    private String stepCounterSensor = "";
+    private String gyroscopeSensor = "";
     private int accellerometerEvent = 0;
     private int heartRateEvent = 0;
-    private int stepCounterEvent=0;
-    private String touchEvents="";
+    private int stepCounterEvent = 0;
+    private String touchEvents = "";
+    private int gyroscopeEvent = 0;
 
     private WindowManager mWindowManager;
     private LinearLayout mDummyView;
     private OutputStream outputStream;
-    private boolean justSent =false;
+    private boolean justSent = false;
 
 
     Thread keyThread = new Thread();
@@ -87,9 +93,6 @@ public class SensorService extends Service implements SensorEventListener {
 
 
     //InputStreamReader reader;
-
-
-
 
 
     @Override
@@ -147,9 +150,10 @@ public class SensorService extends Service implements SensorEventListener {
 
             startSensorListeners();
             mHandler.postDelayed(mRefresh, 500);
-          //  keyThread = new Thread(new KeyLogger());
-         //   keyThread.start();
-          //  getTouchEvents2();
+            //  keyThread = new Thread(new KeyLogger());
+            //   keyThread.start();
+            //  getTouchEvents2();
+
 
         } catch (Exception e) {
             Toast.makeText(this, "An error occured in SensorService onCreate", Toast.LENGTH_LONG).show();
@@ -158,13 +162,13 @@ public class SensorService extends Service implements SensorEventListener {
     }
 
 
-
     private void startSensorListeners() {
         Log.d(TAG, "startSensorListeners");
 
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE), SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER), SensorManager.SENSOR_DELAY_NORMAL, 900000000);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER), SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_NORMAL);
 
         Log.d(TAG, "Sensor started: " + mSensorManager);
 
@@ -174,6 +178,7 @@ public class SensorService extends Service implements SensorEventListener {
         Log.d(TAG, "stopSensorListeners");
         mSensorManager.unregisterListener(SensorService.this);
         Log.d(TAG, "Sensor stoppped: " + mSensorManager);
+        wakeLock.release();
 
     }
 
@@ -201,6 +206,14 @@ public class SensorService extends Service implements SensorEventListener {
         if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             stepCounterEvent++;
             stepCounterSensor = values + " " + stepCounterEvent;
+
+        }
+
+        if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            gyroscopeEvent++;
+            try {
+                gyroscopeSensor = values + " " + event.values[1] + " " + event.values[2] + " " + gyroscopeEvent;
+            }catch (Exception e){}
 
         }
 
@@ -251,8 +264,6 @@ public class SensorService extends Service implements SensorEventListener {
     }
 
 
-
-
     BroadcastReceiver mBroadcastIntentReceiver = new BroadcastReceiver() {     // just captures the screen on and off. An example if we need to track actions
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -279,21 +290,21 @@ public class SensorService extends Service implements SensorEventListener {
         @Override
         public void run() {
             try {
-                final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0 > /sdcard/geteventFile" });
-               // final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0" });
+                final Process process = Runtime.getRuntime().exec(new String[]{"su", "-c", "getevent -lt /dev/input/event0 > /sdcard/geteventFile"});
+                // final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0" });
                 final InputStreamReader reader = new InputStreamReader(process.getInputStream());
                 Log.d("", "it is gonna get getevent1");
                 Runnable run = new Runnable() {
                     @Override
                     public void run() {
-                        while(true){
+                        while (true) {
                             try {
-                              //  final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0 > /sdcard/doubletab" });
-                               //final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0 > /sdcard/doubletab" });
-                               //final InputStreamReader reader = new InputStreamReader(process.getInputStream());
-                               // final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0" });
-                               // final InputStreamReader reader = new InputStreamReader(process.getInputStream());
-                                while(reader.ready()) {
+                                //  final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0 > /sdcard/doubletab" });
+                                //final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0 > /sdcard/doubletab" });
+                                //final InputStreamReader reader = new InputStreamReader(process.getInputStream());
+                                // final Process process = Runtime.getRuntime().exec(new String[] { "su", "-c", "getevent -lt /dev/input/event0" });
+                                // final InputStreamReader reader = new InputStreamReader(process.getInputStream());
+                                while (reader.ready()) {
 
                                     //  Log.d("", "xyx Touch " + reader.read());
                                     Log.d("", "xyx Touch " + reader.read());
@@ -317,10 +328,10 @@ public class SensorService extends Service implements SensorEventListener {
 
 */
                                 //  }
-                               // final Process process1 = Runtime.getRuntime().exec(new String[] { "^C" });
-                               // final InputStreamReader reader2 = new InputStreamReader(process1.getInputStream());
-                              //  final InputStreamReader reader2 = new InputStreamReader(process.getInputStream());
-                               // reader.reset();
+                                // final Process process1 = Runtime.getRuntime().exec(new String[] { "^C" });
+                                // final InputStreamReader reader2 = new InputStreamReader(process1.getInputStream());
+                                //  final InputStreamReader reader2 = new InputStreamReader(process.getInputStream());
+                                // reader.reset();
                                 Thread.sleep(4000);
 
                             } catch (Exception e) {
@@ -345,7 +356,7 @@ public class SensorService extends Service implements SensorEventListener {
                 //}
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("","There is a problem in avg logger");
+                Log.d("", "There is a problem in avg logger");
             }
         }
     }
@@ -422,28 +433,21 @@ public class SensorService extends Service implements SensorEventListener {
 
         Date date = new Date();
         File logFile = new File("sdcard/mHealthLogs.txt");
-        if (!logFile.exists())
-        {
-            try
-            {
+        if (!logFile.exists()) {
+            try {
                 logFile.createNewFile();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        try
-        {
+        try {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(data);
             buf.newLine();
             buf.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -453,29 +457,22 @@ public class SensorService extends Service implements SensorEventListener {
     private void writeToFile_CA(String data) {
 
         Date date = new Date();
-        File logFile = new File("sdcard/CompArch.txt");
-        if (!logFile.exists())
-        {
-            try
-            {
+        File logFile = new File("sdcard/mHealth2.txt");
+        if (!logFile.exists()) {
+            try {
                 logFile.createNewFile();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        try
-        {
+        try {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(data);
             buf.newLine();
             buf.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -492,27 +489,31 @@ public class SensorService extends Service implements SensorEventListener {
             try {
 
 
-            //    startSensorListeners();     // it starts sensor listening
+                //    startSensorListeners();     // it starts sensor listening
 
-                String touch_events="";
+                String touch_events = "";
 
 
                 try {
 
-                    mLogger.logEntry("Accelerometer " + accellerometerSensor);
-                    writeToFile("Accelerometer " + accellerometerSensor);
+                    //mLogger.logEntry("Accelerometer " + accellerometerSensor);
+                    // writeToFile("Accelerometer: " + accellerometerSensor);
                     writeToFile_CA("Accelerometer " + accellerometerSensor);
-                     mLogger.logEntry("Heart Rate " + heartRateSensor);
-                    writeToFile("Heart Rate " + heartRateSensor);
-                    writeToFile_CA("Heart Rate " + heartRateSensor);
+                    //  mLogger.logEntry("Heart Rate " + heartRateSensor);
+                    writeToFile_CA("Step Counter: " + stepCounterSensor);
+                    // writeToFile("Heart Rate " + heartRateSensor);
+                    writeToFile_CA("Heart Rate: " + heartRateSensor);
+                    //  writeToFile("Gyro: " + gyroscopeSensor);
+                    writeToFile_CA("Gyro: " + gyroscopeSensor);
                     //  mLogger.logEntry("Touch Events " + touch_events); // they will come from getInstance (a common share data holder class)
 
-                  //  mLogger.logEntry("Time: " + SystemClock.currentThreadTimeMillis());
-                    writeToFile("Time: " + SystemClock.currentThreadTimeMillis());
-                  //  mLogger.logEntry("Date: " +  DateFormat.getDateTimeInstance().format(new Date()));
+                    //  mLogger.logEntry("Time: " + SystemClock.currentThreadTimeMillis());
+                    //  writeToFile("Time: " + SystemClock.currentThreadTimeMillis());
+                    //  mLogger.logEntry("Date: " +  DateFormat.getDateTimeInstance().format(new Date()));
                     //   stopSensorListeners();      // it stops listening to reduce CPU usage/burden. Because listening costs alot
-                    writeToFile("Date: " +  DateFormat.getDateTimeInstance().format(new Date()));
-                    Log.d(TAG, "Accelerometer " + accellerometerSensor + "\n" + "Heart Rate " + heartRateSensor + "\n" + "Touch Events: " + touch_events + "\n" +  DateFormat.getDateTimeInstance().format(new Date()));
+                    writeToFile_CA("Date: " + DateFormat.getDateTimeInstance().format(new Date()));
+                    writeToFile_CA("TimeInMilSec: " + System.currentTimeMillis());
+                    Log.d(TAG, "Accelerometer " + accellerometerSensor + "\n" + "Heart Rate " + heartRateSensor + "\n" + "Touch Events: " + touch_events + "\n" + DateFormat.getDateTimeInstance().format(new Date()));
 
 
                 } catch (Exception e) {
@@ -520,27 +521,36 @@ public class SensorService extends Service implements SensorEventListener {
                 }
 
                 // deletes 1 sec after sending and creates new log file
-                if(justSent){
-                  //  Logger.deleteUploadFile(SensorService.this);
-                 //   Logger.createLogFile(SensorService.this);
-                 //   Logger.createLogFileToUpload(SensorService.this);
+                if (justSent) {
+                    //  Logger.deleteUploadFile(SensorService.this);
+                    //   Logger.createLogFile(SensorService.this);
+                    //   Logger.createLogFileToUpload(SensorService.this);
                     justSent = false;
                 }
 
                 //Send to phone in every 10 sec
-                if (System.currentTimeMillis() - lastTime >=2000){
+                if (System.currentTimeMillis() - lastTime >= 5000) {
                     Log.d("Logger", "Get ave is called");
-                    mLogger.getAverageData(SensorService.this);
+                    //    mLogger.getAverageData(SensorService.this);
                     Log.d("Logger", "Get ave is returnd");
+
+                    try {
+                        notifyUserToReportStress();
+                    }catch (Exception e){
+                        Log.d(TAG,"Notification: " +e);
+                    }
+
+
+                //    notifyUserToReportStress2();
                     lastTime = System.currentTimeMillis();
-                 //   SendToPhone file_upload = new SendToPhone(SensorService.this);
-                  //  file_upload.start();
+                    //   SendToPhone file_upload = new SendToPhone(SensorService.this);
+                    //  file_upload.start();
                     justSent = true;
                 }
 
 
-               // stopSensorListeners();
-                mHandler.postDelayed(mRefresh, 1000);
+                // stopSensorListeners();
+                mHandler.postDelayed(mRefresh, 200);
 
 
             } catch (Exception e) {
@@ -551,5 +561,69 @@ public class SensorService extends Service implements SensorEventListener {
     };
 
 
+    private void notifyUserToReportStress() {
+        // In this sample, we'll use the same text for the ticker and the expanded notification
+
+        CharSequence text = getText(R.string.are_you_stressed);
+
+        // Set the icon, scrolling text and timestamp
+
+        Log.d(TAG, "It is in the notification");
+
+
+        int notificationId = 001;
+        Intent viewIntent = new Intent(this, MainActivity.class);
+        PendingIntent viewPendingIntent =
+                PendingIntent.getActivity(this, 0, viewIntent, 0);
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.red)
+                        .setContentTitle(getText(R.string.stress_test))
+                        .setContentText(text)
+                        .setContentIntent(viewPendingIntent);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        notificationManager.notify(notificationId, notificationBuilder.build());
+
+
+        //    alertGlobal = true;
+
+
+    }
+
+    private void notifyUserToReportStress2() {
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.red)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+        // Creates an explicit intent for an Activity in your app
+        //  Intent resultIntent = new Intent(this, ResultActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+        int notificationId = 001;
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+      //  stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+        mNotificationManager.notify(notificationId, mBuilder.build());
+
+    }
 }
 

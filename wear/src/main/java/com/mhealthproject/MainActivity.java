@@ -27,10 +27,15 @@ public class MainActivity extends Activity {
 
     private Button startService;
     private Button stopService;
-    private Button movingBall;
+    private Button rankStress;
     private Button catchCollor;
     private Button touchMultiple;
 
+    private Button stress1;
+    private Button stress2;
+    private Button stress3;
+    private Button stress4;
+    private Button stress5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +81,29 @@ public class MainActivity extends Activity {
             stopService.setOnClickListener(stopServiceListener);
         }
 
-        movingBall = (Button) this.findViewById(R.id.movingBallId);
-        if (movingBall != null) {
-            movingBall.setOnClickListener(movingBallListener);
+        stress1 = (Button) this.findViewById(R.id.stress1Id);
+        if (stress1 != null) {
+            stress1.setOnClickListener(stress1Listener);
         }
 
-        catchCollor = (Button) this.findViewById(R.id.catchCollorId);
-        if (catchCollor != null) {
-            catchCollor.setOnClickListener(catchCollorListener);
+        stress2 = (Button) this.findViewById(R.id.stress2Id);
+        if (stress2 != null) {
+            stress2.setOnClickListener(stress2Listener);
         }
 
-        touchMultiple = (Button) this.findViewById(R.id.touchMultipleId);
-        if (touchMultiple != null) {
-            touchMultiple.setOnClickListener(touchMultipleListener);
+        stress3 = (Button) this.findViewById(R.id.stress3Id);
+        if (stress3 != null) {
+            stress3.setOnClickListener(stress3Listener);
+        }
+
+        stress4 = (Button) this.findViewById(R.id.stress4Id);
+        if (stress4 != null) {
+            stress4.setOnClickListener(stress4Listener);
+        }
+
+        stress5 = (Button) this.findViewById(R.id.stress5Id);
+        if (stress5 != null) {
+            stress5.setOnClickListener(stress5Listener);
         }
 
     }
@@ -141,30 +156,53 @@ public class MainActivity extends Activity {
 
 
 
-    private View.OnClickListener movingBallListener = new View.OnClickListener() {
+    private View.OnClickListener stress1Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this,MovingBallActivity.class);
-            MainActivity.this.startActivity(intent);
+            DataHolder.getInstance().setStressRank(1);
+            Toast.makeText(MainActivity.this,"Thanks for your ranking(1)",Toast.LENGTH_SHORT).show();
 
         }
     };
 
-    private View.OnClickListener catchCollorListener = new View.OnClickListener() {
+    private View.OnClickListener stress2Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this,CatchColorActivity.class);
-            MainActivity.this.startActivity(intent);
+            DataHolder.getInstance().setStressRank(2);
+            Toast.makeText(MainActivity.this,"Thanks for your ranking(2)",Toast.LENGTH_SHORT).show();
 
         }
     };
 
-    private View.OnClickListener touchMultipleListener = new View.OnClickListener() {
+    private View.OnClickListener stress3Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this,TouchMultipleActivity.class);
-            MainActivity.this.startActivity(intent);
+            DataHolder.getInstance().setStressRank(3);
+            Toast.makeText(MainActivity.this,"Thanks for your ranking(3)",Toast.LENGTH_SHORT).show();
+
 
         }
     };
+
+    private View.OnClickListener stress4Listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DataHolder.getInstance().setStressRank(4);
+            Toast.makeText(MainActivity.this,"Thanks for your ranking(4)",Toast.LENGTH_SHORT).show();
+
+
+        }
+    };
+
+    private View.OnClickListener stress5Listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DataHolder.getInstance().setStressRank(5);
+            Toast.makeText(MainActivity.this,"Thanks for your ranking(5)",Toast.LENGTH_SHORT).show();
+
+
+        }
+    };
+
+
 }
